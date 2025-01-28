@@ -75,7 +75,8 @@ export const game = (winner: Player): Game => ({
 //  inclure tous les états du jeu de tennis
 export type Score = Points | Forty | Deuce | Advantage | Game;
 
-console.log(deuce()); 
-console.log(forty('PLAYER_ONE', 30));
-console.log(advantage('PLAYER_TWO'));
-console.log(game('PLAYER_ONE'));
+//console.log(deuce()); 
+//console.log(forty('PLAYER_ONE', 30));
+//console.log(advantage('PLAYER_TWO'));
+//console.log(game('PLAYER_ONE'));
+
