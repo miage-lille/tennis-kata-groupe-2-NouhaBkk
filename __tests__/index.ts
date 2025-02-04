@@ -1,8 +1,33 @@
 import { describe, expect, test } from '@jest/globals';
 import { otherPlayer, playerToString } from '..';
+import { deuce, advantage, game, forty, points } from '../types/score';
+
 // import * as fc from 'fast-check';
 
 // import * as G from './generators';
+
+
+describe('Constructors for Deuce, Forty, and Advantage', () => {
+  test('deuce() should return a valid Deuce object', () => {
+    expect(deuce()).toStrictEqual({ kind: 'DEUCE' });
+  });
+
+  test('forty() should return a valid Forty object with given player and otherPoint', () => {
+    expect(forty('PLAYER_ONE', { kind: 'THIRTY' })).toStrictEqual({
+      kind: 'FORTY',
+      fortyData: {
+        player: 'PLAYER_ONE',
+        otherPoint: { kind: 'THIRTY' }
+      }
+    });
+  });
+
+  test('advantage() should return a valid Advantage object', () => {
+    expect(advantage('PLAYER_TWO')).toStrictEqual({ kind: 'ADVANTAGE', player: 'PLAYER_TWO' });
+  });
+});
+
+
 
 describe('Tests for tooling functions', () => {
   test('Given playerOne when playerToString', () => {
