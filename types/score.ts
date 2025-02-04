@@ -1,39 +1,63 @@
 import { Player } from './player';
+import { none, some, Option } from 'fp-ts/Option';
 
-// Surely not the best choice
-export type Point = number;
+// Définition des points (Love, 15, 30)
+export type Love = { kind: 'LOVE' };
+export type Fifteen = { kind: 'FIFTEEN' };
+export type Thirty = { kind: 'THIRTY' };
+export type Point = Love | Fifteen | Thirty;
 
-export type PointsData = {
-  PLAYER_ONE: Point;
-  PLAYER_TWO: Point;
-};
+//  Fonctions constructrices pour les points
+export const love = (): Love => ({ kind: 'LOVE' });
+export const fifteen = (): Fifteen => ({ kind: 'FIFTEEN' });
+export const thirty = (): Thirty => ({ kind: 'THIRTY' });
 
-export type Points = {
-  kind: 'POINTS';
-  pointsData: PointsData;
-};
+//  Définition des scores
+export type PointsData = { playerOne: Point; playerTwo: Point };
+export type FortyData = { player: Player; otherPoint: Point };
 
-export const points = (
-  playerOnePoints: Point,
-  playerTwoPoints: Point
-): Points => ({
+export type Points = { kind: 'POINTS'; pointsData: PointsData };
+export type Forty = { kind: 'FORTY'; fortyData: FortyData };
+export type Deuce = { kind: 'DEUCE' };
+export type Advantage = { kind: 'ADVANTAGE'; player: Player };
+export type Game = { kind: 'GAME'; player: Player };
+
+export type Score = Points | Forty | Deuce | Advantage | Game;
+
+// Exercice 0: Fonctions constructrices pour les états
+export const points = (playerOnePoints: Point, playerTwoPoints: Point): Points => ({
   kind: 'POINTS',
   pointsData: {
-    PLAYER_ONE: playerOnePoints,
-    PLAYER_TWO: playerTwoPoints,
+  playerOne: playerOnePoints,
+  playerTwo: playerTwoPoints,
   },
-});
+ });
+ export const forty = (player: Player, otherPoint: Point): Forty => ({
+  kind: 'FORTY',
+  fortyData: { player, otherPoint },
+});export const deuce = (): Deuce => ({ kind: 'DEUCE' });
+export const advantage = (player: Player): Advantage => ({ kind: 'ADVANTAGE', player });
+export const game = (winner: Player): Game => ({ kind: 'GAME', player: winner });
 
-// Exerice 0: Write all type constructors of Points, Deuce, Forty and Advantage types.
-
-export type Game = {
-  kind: 'GAME';
-  player: Player; // Player has won
+//Exercice 1
+export const incrementPoint = (point: Point): Option<Point> => {
+  switch (point.kind) {
+    case 'LOVE':
+      return some(fifteen());
+    case 'FIFTEEN':
+      return some(thirty());
+    case 'THIRTY':
+      return none; 
+  }
 };
 
-export const game = (winner: Player): Game => ({
-  kind: 'GAME',
-  player: winner,
-});
-
-export type Score = Points | Game;
+export const nextPoint = (point: Point): Option<Point> => {
+  switch (point.kind) {
+    case 'LOVE':
+      return some(fifteen());
+    case 'FIFTEEN':
+      return some(thirty());
+    case 'THIRTY':
+      return none; 
+  }
+};
