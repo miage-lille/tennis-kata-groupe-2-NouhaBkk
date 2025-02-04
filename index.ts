@@ -1,7 +1,8 @@
-import { Player } from './types/player';
-import { Point, PointsData, Score } from './types/score';
-// import { none, Option, some, match as matchOpt } from 'fp-ts/Option';
-// import { pipe } from 'fp-ts/lib/function';
+import { isSamePlayer, Player } from './types/player';
+import { Point, PointsData, Score, forty, deuce, game, advantage, incrementPoint, FortyData } from './types/score';
+import { none, Option, some, match as matchOpt } from 'fp-ts/Option';
+import { pipe } from 'fp-ts/lib/function';
+
 
 // -------- Tooling functions --------- //
 
@@ -23,7 +24,6 @@ export const otherPlayer = (player: Player) => {
 };
 // Exercice 1 :
 export const pointToString = (point: Point): string =>{
-  'You can use pattern matching with switch case pattern.'
   switch (point.kind) {
     case 'LOVE': return "Love";
     case 'FIFTEEN': return "15";
@@ -33,12 +33,11 @@ export const pointToString = (point: Point): string =>{
 };
 
 export const scoreToString = (score: Score): string =>{
-  'You can use pattern matching with switch case pattern.';
   switch (score.kind) {
     case 'POINTS':
       return `PLAYER_ONE: ${pointToString(score.pointsData.playerOne)} - PLAYER_TWO: ${pointToString(score.pointsData.playerTwo)}`;
     case 'FORTY':
-      return `PLAYER_ONE: ${score.fortyData.player === "PLAYER_ONE" ? "40" : pointToString(score.fortyData.otherPoint)} - PLAYER_TWO: ${score.fortyData.player === "PLAYER_TWO" ? "40" : pointToString(score.fortyData.otherPoint)}`;
+      return `Advantage ${score.fortyData.player}`;
     case 'DEUCE':
       return "Deuce";
     case 'ADVANTAGE':
@@ -46,23 +45,30 @@ export const scoreToString = (score: Score): string =>{
     case 'GAME':
       return `Game won by ${score.player}`;
   }
-};  
-export const scoreWhenDeuce = (winner: Player): Score => {
-  throw new Error('not implemented');
-};
+}; 
+
+export const scoreWhenDeuce = (winner: Player): Score => advantage(winner);
 
 export const scoreWhenAdvantage = (
   advantagedPlayed: Player,
   winner: Player
 ): Score => {
-  throw new Error('not implemented');
+  if (isSamePlayer(advantagedPlayed, winner)) return game(winner);
+  return deuce();
 };
 
 export const scoreWhenForty = (
-  currentForty: unknown, // TO UPDATE WHEN WE KNOW HOW TO REPRESENT FORTY
+  currentForty: FortyData,
   winner: Player
 ): Score => {
-  throw new Error('not implemented');
+  if (isSamePlayer(currentForty.player, winner)) return game(winner);
+  return pipe(
+    incrementPoint(currentForty.otherPoint),
+    matchOpt(
+      () => deuce(),
+      p => forty(currentForty.player, p) as Score
+    )
+  );
 };
 
 export const scoreWhenGame = (winner: Player): Score => {
