@@ -135,13 +135,16 @@ describe('Tests for transition functions', () => {
       })
     );
   });
-  test('Given one player at 30 and win, score kind is forty', () => {
+  test('Given one player at 30 and win, score is forty', () => {
     fc.assert(
       fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
-        fc.pre(pointsData.playerOne.kind === 'THIRTY' || pointsData.playerTwo.kind === 'THIRTY');
-        const newScore = scoreWhenPoint(pointsData, winner);
-        expect(newScore.kind).toStrictEqual('FORTY');
-    })
-  );
+        fc.pre(
+          (winner === 'PLAYER_ONE' && pointsData.playerOne.kind === 'THIRTY') ||
+          (winner === 'PLAYER_TWO' && pointsData.playerTwo.kind === 'THIRTY')
+        );
+        const score = scoreWhenPoint(pointsData, winner);
+        expect(score.kind).toBe('FORTY');
+      })
+    );
   });
-});
+}); 

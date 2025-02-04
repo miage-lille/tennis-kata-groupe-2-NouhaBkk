@@ -77,12 +77,10 @@ export const scoreWhenGame = (winner: Player): Score => game(winner);
 export const scoreWhenPoint = (current: PointsData, winner: Player): Score => {
   const currentPoint = winner === 'PLAYER_ONE' ? current.playerOne : current.playerTwo;
 
-  // ✅ Si le joueur était à 30 et gagne, il passe à Forty
   if (currentPoint.kind === 'THIRTY') {
     return forty(winner, winner === 'PLAYER_ONE' ? current.playerTwo : current.playerOne);
   }
 
-  // ✅ Sinon, on met à jour le score normalement avec `points()`
   return matchOpt<Point, Score>(
     () => points(current.playerOne, current.playerTwo), // Valeur par défaut (cas `none`)
     (newPoint) => points(

@@ -32,8 +32,10 @@ export const points = (playerOnePoints: Point, playerTwoPoints: Point): Points =
   playerTwo: playerTwoPoints,
   },
  });
-export const forty = (player: Player, otherPoint: Point): Forty => ({ kind: 'FORTY', fortyData: { player, otherPoint } });
-export const deuce = (): Deuce => ({ kind: 'DEUCE' });
+ export const forty = (player: Player, otherPoint: Point): Forty => ({
+  kind: 'FORTY',
+  fortyData: { player, otherPoint },
+});export const deuce = (): Deuce => ({ kind: 'DEUCE' });
 export const advantage = (player: Player): Advantage => ({ kind: 'ADVANTAGE', player });
 export const game = (winner: Player): Game => ({ kind: 'GAME', player: winner });
 
