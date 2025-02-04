@@ -1,5 +1,5 @@
 import { isSamePlayer, Player } from './types/player';
-import { Point, PointsData, Score, forty, deuce, game, advantage, incrementPoint, FortyData } from './types/score';
+import { Point, PointsData, Score, forty, deuce, game, advantage, incrementPoint, FortyData, nextPoint, points } from './types/score';
 import { none, Option, some, match as matchOpt } from 'fp-ts/Option';
 import { pipe } from 'fp-ts/lib/function';
 
@@ -14,14 +14,10 @@ export const playerToString = (player: Player) => {
       return 'Player 2';
   }
 };
-export const otherPlayer = (player: Player) => {
-  switch (player) {
-    case 'PLAYER_ONE':
-      return 'PLAYER_TWO';
-    case 'PLAYER_TWO':
-      return 'PLAYER_ONE';
-  }
-};
+export const otherPlayer = (player: Player): Player => 
+  player === 'PLAYER_ONE' ? 'PLAYER_TWO' : 'PLAYER_ONE';
+
+
 // Exercice 1 :
 export const pointToString = (point: Point): string =>{
   switch (point.kind) {
@@ -71,17 +67,47 @@ export const scoreWhenForty = (
   );
 };
 
-export const scoreWhenGame = (winner: Player): Score => {
-  throw new Error('not implemented');
-};
+export const scoreWhenGame = (winner: Player): Score => game(winner);
 
 // Exercice 2
-// Tip: You can use pipe function from fp-ts to improve readability.
-// See scoreWhenForty function above.
+// Done
+
+
+
 export const scoreWhenPoint = (current: PointsData, winner: Player): Score => {
-  throw new Error('not implemented');
+  const currentPoint = winner === 'PLAYER_ONE' ? current.playerOne : current.playerTwo;
+
+  // ✅ Si le joueur était à 30 et gagne, il passe à Forty
+  if (currentPoint.kind === 'THIRTY') {
+    return forty(winner, winner === 'PLAYER_ONE' ? current.playerTwo : current.playerOne);
+  }
+
+  // ✅ Sinon, on met à jour le score normalement avec `points()`
+  return matchOpt<Point, Score>(
+    () => points(current.playerOne, current.playerTwo), // Valeur par défaut (cas `none`)
+    (newPoint) => points(
+      winner === 'PLAYER_ONE' ? newPoint : current.playerOne,
+      winner === 'PLAYER_TWO' ? newPoint : current.playerTwo
+    )
+  )(incrementPoint(currentPoint));
 };
 
+
+
+
+
+
 export const score = (currentScore: Score, winner: Player): Score => {
-  throw new Error('not implemented');
+  switch (currentScore.kind) {
+    case 'POINTS':
+      return scoreWhenPoint(currentScore.pointsData, winner);
+    case 'FORTY':
+      return scoreWhenForty(currentScore.fortyData, winner);
+    case 'ADVANTAGE':
+      return scoreWhenAdvantage(currentScore.player, winner);
+    case 'DEUCE':
+      return scoreWhenDeuce(winner);
+    case 'GAME':
+      return scoreWhenGame(winner);
+  }
 };

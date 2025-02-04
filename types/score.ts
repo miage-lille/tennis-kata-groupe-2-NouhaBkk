@@ -25,7 +25,13 @@ export type Game = { kind: 'GAME'; player: Player };
 export type Score = Points | Forty | Deuce | Advantage | Game;
 
 // Exercice 0: Fonctions constructrices pour les états
-export const points = (p1: Point, p2: Point): Points => ({ kind: 'POINTS', pointsData: { playerOne: p1, playerTwo: p2 } });
+export const points = (playerOnePoints: Point, playerTwoPoints: Point): Points => ({
+  kind: 'POINTS',
+  pointsData: {
+  playerOne: playerOnePoints,
+  playerTwo: playerTwoPoints,
+  },
+ });
 export const forty = (player: Player, otherPoint: Point): Forty => ({ kind: 'FORTY', fortyData: { player, otherPoint } });
 export const deuce = (): Deuce => ({ kind: 'DEUCE' });
 export const advantage = (player: Player): Advantage => ({ kind: 'ADVANTAGE', player });
@@ -43,3 +49,13 @@ export const incrementPoint = (point: Point): Option<Point> => {
   }
 };
 
+export const nextPoint = (point: Point): Option<Point> => {
+  switch (point.kind) {
+    case 'LOVE':
+      return some(fifteen());
+    case 'FIFTEEN':
+      return some(thirty());
+    case 'THIRTY':
+      return none; 
+  }
+};

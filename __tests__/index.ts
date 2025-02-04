@@ -112,12 +112,12 @@ describe('Tests for transition functions', () => {
       })
     );
   });
-  test('Given player at 40 and other at 15 when other wins, score is 40 - 15', () => {
+  test('Given player at 40 and other at 15 when other wins, score is 40 - 30', () => {
     fc.assert(
       fc.property(G.getForty(), G.getPlayer(), ({ fortyData }, winner) => {
         // Other player wins
         fc.pre(!isSamePlayer(fortyData.player, winner));
-        // Other point must be 15
+        // Other point must be 30
         fc.pre(fortyData.otherPoint.kind === 'FIFTEEN');
         const score = scoreWhenForty(fortyData, winner);
         const scoreExpected = forty(fortyData.player, thirty());
@@ -126,22 +126,22 @@ describe('Tests for transition functions', () => {
     );
   });
   //-------------------------TESTS POINTS-------------------------- //
-  // test('Given players at 0 or 15 points score kind is still POINTS', () => {
-  // fc.assert(
-  //   fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
-  //     throw new Error(
-  //       'Your turn to code the preconditions, expected result and test.'
-  //     );
-  //   })
-  // );
-  // });
-  // test('Given one player at 30 and win, score kind is forty', () => {
-  // fc.assert(
-  //   fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
-  //     throw new Error(
-  //       'Your turn to code the preconditions, expected result and test.'
-  //     );
-  //   })
-  // );
-  // });
+  test('Given players at 0 or 15 points, score kind is still POINTS', () => {
+    fc.assert(
+      fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
+        fc.pre(pointsData.playerOne.kind !== 'THIRTY' && pointsData.playerTwo.kind !== 'THIRTY');
+        const newScore = scoreWhenPoint(pointsData, winner);
+        expect(newScore.kind).toStrictEqual('POINTS');
+      })
+    );
+  });
+  test('Given one player at 30 and win, score kind is forty', () => {
+    fc.assert(
+      fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
+        fc.pre(pointsData.playerOne.kind === 'THIRTY' || pointsData.playerTwo.kind === 'THIRTY');
+        const newScore = scoreWhenPoint(pointsData, winner);
+        expect(newScore.kind).toStrictEqual('FORTY');
+    })
+  );
+  });
 });
